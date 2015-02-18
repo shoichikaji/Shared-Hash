@@ -1,0 +1,6 @@
+name = "Shared-Hash"
+# badges = ["travis"]
+authority="cpan:SKAJI"
+
+module_maker="ModuleBuildTiny"
+
