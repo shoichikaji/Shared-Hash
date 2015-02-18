@@ -42,7 +42,8 @@
       },
       "runtime" : {
          "requires" : {
-            "perl" : "5.010"
+            "parent" : "0",
+            "perl" : "5.010_001"
          }
       },
       "test" : {
