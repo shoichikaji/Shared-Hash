@@ -4,6 +4,7 @@ use warnings;
 use Fcntl qw(:DEFAULT :flock);
 use File::Temp qw(tempfile);
 use Storable qw(nfreeze thaw);
+use constant CHUNK_SIXE => 1024**2;
 
 {
     package Shared::Hash::File::Guard;
@@ -50,7 +51,7 @@ sub _slurp {
     my $fh = $self->fh;
     sysseek $fh, 0, 0;
     my $buffer = "";
-    while (sysread $fh, my $buf, 8024) {
+    while (sysread $fh, my $buf, CHUNK_SIXE) {
         $buffer .= $buf;
     }
     thaw $buffer;
