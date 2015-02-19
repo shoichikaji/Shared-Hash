@@ -79,6 +79,8 @@ Create a new Shared::Hash objcect. C<%option> may be:
 
 Default driver is File, and path is a tempfile.
 
+=back
+
 =head2 METHODS
 
 =over 4
