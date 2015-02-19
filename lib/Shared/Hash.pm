@@ -2,79 +2,15 @@ package Shared::Hash;
 use 5.010;
 use strict;
 use warnings;
-use File::Temp 'tempfile';
-use Time::HiRes ();
-use Shared::Hash::Client;
-use Shared::Hash::Server;
 
 our $VERSION = "0.01";
-my $ENV_KEY = "PERL_SHARED_HASH_PATH";
 
 sub new {
-    my $class = shift;
-    my ($server_pid, $path) = $class->_exec_server;
-    my $client = Shared::Hash::Client->new($path);
-    $ENV{$ENV_KEY} = $path;
-    my $self = bless {
-        path => $path,
-        server_pid => $server_pid,
-        owner_pid => $$,
-        client => $client,
-    }, $class;
-
-    for (1..10) {
-        if ($client->ping) {
-            return $self;
-        } else {
-            Time::HiRes::sleep(0.002);
-        }
-    }
-    die "Failed to connect server";
-}
-
-sub path { shift->{path} }
-
-sub _exec_server {
-    my $class = shift;
-    (undef, my $path) = tempfile(SUFFIX => ".sock", UNLINK => 0);
-    unlink $path;
-
-    my $pid = fork // die "failed to fork: $!";
-    return ($pid, $path) if $pid;
-
-    my $server = Shared::Hash::Server->new($path);
-    $server->accept_loop;
-    exit;
-}
-
-sub _shutdown_server {
-    my $self = shift;
-    my $pid = $self->{server_pid};
-    kill TERM => $pid;
-    kill KILL => $pid;
-    waitpid $pid, 0;
-    unlink $self->{path};
-}
-
-sub DESTROY {
-    my $self = shift;
-    return if $self->{owner_pid} != $$;
-    $self->_shutdown_server;
-}
-
-sub get {
-    my ($self, $key) = @_;
-    $self->{client}->get($key);
-}
-
-sub set {
-    my ($self, $key, $value) = @_;
-    $self->{client}->set($key, $value);
-}
-
-sub lock {
-    my ($self, $cb) = @_;
-    $self->{client}->lock($cb);
+    my ($class, %option) = @_;
+    my $driver = delete $option{driver} || "File";
+    my $klass = "Shared::Hash::$driver";
+    eval "require $klass;" or die $@;
+    $klass->new(%option);
 }
 
 1;
@@ -105,7 +41,7 @@ Shared::Hash - hash-like object which is shared between processes
 =head1 DESCRIPTION
 
 Shared::Hash is a hash-like object which is shared between processes.
-It uses unix domain socket.
+It uses a file or a unix domain socket.
 
 =head2 FEATURES
 
@@ -129,6 +65,19 @@ It uses unix domain socket.
     $hash->set(bar => [1..10]);
 
 =back
+
+=head2 CONSTRUCTOR
+
+=over 4
+
+=item C<< my $hash = Shared::Hash->new(%option) >>
+
+Create a new Shared::Hash objcect. C<%option> may be:
+
+    driver => "File" or "UNIX"
+    path   => "filepath" or "unixdomain.sock"
+
+Default driver is File, and path is a tempfile.
 
 =head2 METHODS
 

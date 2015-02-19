@@ -1,7 +1,7 @@
-package Shared::Hash::Server;
+package Shared::Hash::UNIX::Server;
 use strict;
 use warnings;
-use parent 'Shared::Hash::Base';
+use parent 'Shared::Hash::UNIX::Base';
 use IO::Socket::UNIX;
 use Storable qw(nfreeze thaw);
 use Carp 'confess';

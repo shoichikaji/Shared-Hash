@@ -3,9 +3,11 @@ use Test::More 0.98;
 
 use_ok $_ for qw(
     Shared::Hash
-    Shared::Hash::Base
-    Shared::Hash::Client
-    Shared::Hash::Server
+    Shared::Hash::File
+    Shared::Hash::UNIX
+    Shared::Hash::UNIX::Base
+    Shared::Hash::UNIX::Client
+    Shared::Hash::UNIX::Server
 );
 
 done_testing;

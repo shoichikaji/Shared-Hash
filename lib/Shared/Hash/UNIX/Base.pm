@@ -1,4 +1,4 @@
-package Shared::Hash::Base;
+package Shared::Hash::UNIX::Base;
 use strict;
 use warnings;
 use 5.010;

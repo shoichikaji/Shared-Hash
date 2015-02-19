@@ -21,7 +21,7 @@ Shared::Hash - hash-like object which is shared between processes
 # DESCRIPTION
 
 Shared::Hash is a hash-like object which is shared between processes.
-It uses unix domain socket.
+It uses a file or a unix domain socket.
 
 ## FEATURES
 
@@ -40,6 +40,17 @@ It uses unix domain socket.
 
         $hash->set(foo => { hash => "ref" });
         $hash->set(bar => [1..10]);
+
+## CONSTRUCTOR
+
+- `my $hash = Shared::Hash->new(%option)`
+
+    Create a new Shared::Hash objcect. `%option` may be:
+
+        driver => "File" or "UNIX"
+        path   => "filepath" or "unixdomain.sock"
+
+    Default driver is File, and path is a tempfile.
 
 ## METHODS
 
@@ -62,3 +73,11 @@ it under the same terms as Perl itself.
 # AUTHOR
 
 Shoichi Kaji <skaji@cpan.org>
+
+# POD ERRORS
+
+Hey! **The above document had some coding errors, which are explained below:**
+
+- Around line 82:
+
+    You forgot a '=back' before '=head2'
