@@ -6,9 +6,14 @@ use t::Util;
 use Shared::Hash;
 use Time::HiRes ();
 
-for my $driver (qw(UNIX File)) {
+my @driver = ("File");
+if (eval { require IO::Socket::UNIX }) {
+    push @driver, "UNIX";
+}
 
-    subtest basic => sub {
+for my $driver (@driver) {
+
+    subtest "basic_$driver" => sub {
         my $hash = Shared::Hash->new(driver => $driver);
         $hash->set(foo => 1);
         $hash->set(bar => [1]);
@@ -22,7 +27,7 @@ for my $driver (qw(UNIX File)) {
         is $hash->get("NO"), undef;
     };
 
-    subtest fork => sub {
+    subtest "fork_$driver" => sub {
         my $hash = Shared::Hash->new(driver => $driver);
         my $pid = do_fork {
             $hash->set(foo => 1);
@@ -38,7 +43,7 @@ for my $driver (qw(UNIX File)) {
         is $hash->get("NO"), undef;
     };
 
-    subtest lock => sub {
+    subtest "lock_$driver" => sub {
         my $hash = Shared::Hash->new(driver => $driver);
         $hash->set(foo => 0);
         my $pid = do_fork {

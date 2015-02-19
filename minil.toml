@@ -1,5 +1,3 @@
 name = "Shared-Hash"
 # badges = ["travis"]
 authority = "cpan:SKAJI"
-[build]
-build_class = "builder::MyBuilder"
