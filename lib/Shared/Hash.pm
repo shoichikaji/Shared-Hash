@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use Cwd qw(abs_path);
 use Fcntl qw(:DEFAULT :flock);
-use File::Basename 'dirname';
 use File::Temp qw(tempfile);
 use Storable qw(nfreeze thaw);
 use constant CHUNK_SIZE => 1024**2;
@@ -28,6 +27,8 @@ sub new {
     $self->_spew(+{});
     $self;
 }
+
+sub path { shift->{path} }
 
 sub _reopen {
     my $self = shift;
