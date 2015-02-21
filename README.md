@@ -21,16 +21,14 @@ Shared::Hash - hash-like object which is shared between processes
 # DESCRIPTION
 
 Shared::Hash is a hash-like object which is shared between processes.
-It uses a file or a unix domain socket.
+It uses a file for IPC.
 
 ## FEATURES
 
-- easy to use
 - support lock
 
-        # this is atomic!
         $hash->lock(sub {
-            my $hash = shift;
+            # in this callback, your operations for $hash are atomic!
             my $i = $hash->get("foo");
             $i++;
             $hash->set(foo => $i);
@@ -43,25 +41,40 @@ It uses a file or a unix domain socket.
 
 ## CONSTRUCTOR
 
-- `my $hash = Shared::Hash->new(%option)`
+### `my $hash = Shared::Hash->new(%option)`
 
-    Create a new Shared::Hash objcect. `%option` may be:
+Create a new Shared::Hash object. `%option` may be:
 
-        driver => "File" or "UNIX"
-        path   => "filepath" or "unixdomain.sock"
+    path => "filepath"
 
-    Default driver is File, and path is a tempfile.
+The default path is a temp file.
 
 ## METHODS
 
-- `$hash->get($key)`
+### `my $value = $hash->get($key)`
 
-    If `$hash` does not contain `$key`, then it returns `undef`
+Get the value for `$key`.
+If `$hash` does not contain `$key`, then it returns `undef`.
 
-- `$hash->set($key, $value)`
-- `$hash->lock($callback)`
+### `$hash->set($key, $value)`
 
-    `$callback` will be executed with locked `$hash` as a arguemnt.
+Set `$value` for `$key`.
+
+### `my $hash_ref = $hash->as_hash`
+
+Get a cloned hash reference.
+
+### `my @keys = $hash->keys`
+
+All keys of `$hash`.
+
+### `my @values = $hash->values`
+
+All values of `$hash`.
+
+### `$hash->lock($callback)`
+
+In `$callback`, your operation for `$hash` is atomic.
 
 # LICENSE
 

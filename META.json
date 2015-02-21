@@ -42,6 +42,7 @@
       },
       "runtime" : {
          "requires" : {
+            "Filesys::Notify::Simple" : "0",
             "parent" : "0",
             "perl" : "5.010_001"
          }
