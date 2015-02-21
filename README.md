@@ -41,43 +41,43 @@ It uses a file for IPC.
 
 ## CONSTRUCTOR
 
-### `my $hash = Shared::Hash->new(%option)`
+#### `my $hash = Shared::Hash->new(%option)`
 
 Create a new Shared::Hash object.
-You can optionaly append `path` option.
+You can optionally specify `path` option.
 Then, you can also use it later:
 
-    $ perl -MShared::Hash -e 'Shared::Hash->new(path => "data.txt")->set(foo => "bar")'
+    $ perl -MShared::Hash -e 'Shared::Hash->new(path => "foo.data")->set(foo => "bar")'
 
-    $ perl -MShared::Hash -e 'print( Shared::Hash->new(path => "data.txt")->get("foo") )'
+    $ perl -MShared::Hash -e 'print(Shared::Hash->new(path => "foo.data")->get("foo"))'
     bar
 
 Default `path` is a tempfile.
 
 ## METHODS
 
-### `my $value = $hash->get($key)`
+#### `my $value = $hash->get($key)`
 
 Get the value for `$key`.
 If `$hash` does not contain `$key`, then it returns `undef`.
 
-### `$hash->set($key, $value)`
+#### `$hash->set($key, $value)`
 
 Set `$value` for `$key`.
 
-### `my $hash_ref = $hash->as_hash`
+#### `my $hash_ref = $hash->as_hash`
 
 Get a cloned hash reference.
 
-### `my @keys = $hash->keys`
+#### `my @keys = $hash->keys`
 
 All keys of `$hash`.
 
-### `my @values = $hash->values`
+#### `my @values = $hash->values`
 
 All values of `$hash`.
 
-### `$hash->lock($callback)`
+#### `$hash->lock($callback)`
 
 In `$callback`, your operation for `$hash` is atomic.
 

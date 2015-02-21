@@ -180,43 +180,43 @@ It uses a file for IPC.
 
 =head2 CONSTRUCTOR
 
-=head3 C<< my $hash = Shared::Hash->new(%option) >>
+=head4 C<< my $hash = Shared::Hash->new(%option) >>
 
 Create a new Shared::Hash object.
-You can optionaly append C<path> option.
+You can optionally specify C<path> option.
 Then, you can also use it later:
 
-    $ perl -MShared::Hash -e 'Shared::Hash->new(path => "data.txt")->set(foo => "bar")'
+    $ perl -MShared::Hash -e 'Shared::Hash->new(path => "foo.data")->set(foo => "bar")'
 
-    $ perl -MShared::Hash -e 'print( Shared::Hash->new(path => "data.txt")->get("foo") )'
+    $ perl -MShared::Hash -e 'print(Shared::Hash->new(path => "foo.data")->get("foo"))'
     bar
 
 Default C<path> is a tempfile.
 
 =head2 METHODS
 
-=head3 C<< my $value = $hash->get($key) >>
+=head4 C<< my $value = $hash->get($key) >>
 
 Get the value for C<$key>.
 If C<$hash> does not contain C<$key>, then it returns C<undef>.
 
-=head3 C<< $hash->set($key, $value) >>
+=head4 C<< $hash->set($key, $value) >>
 
 Set C<$value> for C<$key>.
 
-=head3 C<< my $hash_ref = $hash->as_hash >>
+=head4 C<< my $hash_ref = $hash->as_hash >>
 
 Get a cloned hash reference.
 
-=head3 C<< my @keys = $hash->keys >>
+=head4 C<< my @keys = $hash->keys >>
 
 All keys of C<$hash>.
 
-=head3 C<< my @values = $hash->values >>
+=head4 C<< my @values = $hash->values >>
 
 All values of C<$hash>.
 
-=head3 C<< $hash->lock($callback) >>
+=head4 C<< $hash->lock($callback) >>
 
 In C<$callback>, your operation for C<$hash> is atomic.
 
