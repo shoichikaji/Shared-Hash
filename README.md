@@ -43,11 +43,16 @@ It uses a file for IPC.
 
 ### `my $hash = Shared::Hash->new(%option)`
 
-Create a new Shared::Hash object. `%option` may be:
+Create a new Shared::Hash object.
+You can optionaly append `path` option.
+Then, you can also use it later:
 
-    path => "filepath"
+    $ perl -MShared::Hash -e 'Shared::Hash->new(path => "data.txt")->set(foo => "bar")'
 
-The default path is a temp file.
+    $ perl -MShared::Hash -e 'print( Shared::Hash->new(path => "data.txt")->get("foo") )'
+    bar
+
+Default `path` is a tempfile.
 
 ## METHODS
 

@@ -21,10 +21,16 @@ sub new {
     if (!$path) {
         (undef, $path) = tempfile OPEN => 0;
     }
-    my $self = bless { path => $path, initial_pid => $$ }, $class;
+    my $self = bless {
+        path => $path,
+        initial_pid => $$,
+        use_existing_path => $option{path} ? 1 : 0,
+    }, $class;
     $self->_reopen;
     $self->{path} = abs_path($self->{path}); # XXX
-    $self->_spew(+{});
+    if (!$self->{use_existing_path} or ( -s $self->{path} == 0 )) {
+        $self->_spew(+{});
+    }
     $self;
 }
 
@@ -41,7 +47,9 @@ sub _reopen {
 sub DESTROY {
     my $self = shift;
     return if $self->{initial_pid} != $$;
-    unlink $self->{path};
+    if (!$self->{use_existing_path}) {
+        unlink $self->{path};
+    }
 }
 
 sub fh {
@@ -121,6 +129,8 @@ sub _lock {
 1;
 __END__
 
+=for stopwords tempfile
+
 =encoding utf-8
 
 =head1 NAME
@@ -172,11 +182,16 @@ It uses a file for IPC.
 
 =head3 C<< my $hash = Shared::Hash->new(%option) >>
 
-Create a new Shared::Hash object. C<%option> may be:
+Create a new Shared::Hash object.
+You can optionaly append C<path> option.
+Then, you can also use it later:
 
-    path => "filepath"
+    $ perl -MShared::Hash -e 'Shared::Hash->new(path => "data.txt")->set(foo => "bar")'
 
-The default path is a temp file.
+    $ perl -MShared::Hash -e 'print( Shared::Hash->new(path => "data.txt")->get("foo") )'
+    bar
+
+Default C<path> is a tempfile.
 
 =head2 METHODS
 

@@ -5,8 +5,9 @@ use Test::More;
 use t::Util;
 use Shared::Hash;
 use Time::HiRes ();
+use File::Temp 'tempfile';
 
-my @path;
+my @must_removed;
 
 subtest "basic" => sub {
     my $hash = Shared::Hash->new;
@@ -25,7 +26,7 @@ subtest "basic" => sub {
     is_deeply $hash->as_hash, {
         foo => 1, bar => [1], baz => {hello => 1}, "あ" => "い",
     };
-    push @path, $hash->path;
+    push @must_removed, $hash->path;
 };
 
 subtest "fork" => sub {
@@ -42,7 +43,7 @@ subtest "fork" => sub {
     is_deeply $hash->get("baz"), {hello => 1};
     is $hash->get("hoge"), "い";
     is $hash->get("NO"), undef;
-    push @path, $hash->path;
+    push @must_removed, $hash->path;
 };
 
 subtest "lock" => sub {
@@ -58,10 +59,24 @@ subtest "lock" => sub {
     Time::HiRes::sleep(0.3);
     is $hash->get("foo"), 0 for 1..10;
     waitpid $pid, 0;
-    push @path, $hash->path;
+    push @must_removed, $hash->path;
 };
 
-for my $path (@path) {
+subtest path => sub {
+    (undef, my $tempfile) = tempfile(OPEN => 0);
+    {
+        my $hash = Shared::Hash->new( path => $tempfile );
+        $hash->set( hello => "world" );
+    }
+    {
+        my $hash = Shared::Hash->new( path => $tempfile );
+        is $hash->get("hello"), "world";
+    }
+    ok -f $tempfile;
+    unlink $tempfile;
+};
+
+for my $path (@must_removed) {
     ok !-e $path, "$path must be removed";
 }
 
